@@ -107,10 +107,10 @@ func main() {
 	r := realis.NewClient(config)
 	defer r.Close()
 
-	var aurora_job realis.Job
+	var auroraJob realis.Job
 
 	for _, job := range jsonJob {
-		aurora_job = realis.NewJob().
+		auroraJob = realis.NewJob().
 			Environment("prod").
 			Role("benchmarks").
 			Name(job.NAME).
@@ -123,8 +123,8 @@ func main() {
 
 		fmt.Println("Creating docker based job : ", job.NAME)
 		container := realis.NewDockerContainer().Image(job.IMAGE).AddParameter("network", "host")
-		aurora_job.Container(container)
-		resp, err := r.CreateJob(aurora_job)
+		auroraJob.Container(container)
+		resp, err := r.CreateJob(auroraJob)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
