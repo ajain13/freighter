@@ -93,7 +93,7 @@ func main() {
 		}
 	}
 
-	config, err := realis.NewDefaultConfig(*url, 10000)
+	config, err := realis.NewTBinaryConfig(*url, 10000)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

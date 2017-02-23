@@ -3,135 +3,129 @@
       "name": "minife",
       "cpu": 3.0,
       "ram": 4096,
-      "watts": 30.248,
-      "image": "gouravr/minife:v5",
+      "image": "rdelvalle/minife:electron1",
       "cmd": "cd src && mpirun -np 3 miniFE.x -nx 100 -ny 100 -nz 100",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "dgemm",
-      "cpu": 4.0,
+      "cpu": 3.0,
       "ram": 32,
-      "watts": 78.397,
-      "image": "gouravr/dgemm:v2",
+      "image": "rdelvalle/dgemm:electron1",
       "cmd": "/./mt-dgemm 1024",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "stream",
-      "cpu": 3.0,
+      "cpu": 2.0,
       "ram": 4096,
-      "watts": 27.803,
-      "image": "gouravr/stream:v2",
+      "image": "rdelvalle/stream:electron1",
       "cmd": "/./an9-stream",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "network-loopback",
-      "cpu": 4.0,
-      "ram": 32,
-      "watts": 32.824,
-      "image": "gouravr/phoronix:network-loopback",
-      "cmd": "phoronix-test-suite batch-run pts/network-loopback ",
-      "inst": 10
+      "cpu": 3.0,
+      "ram": 64,
+      "image": "ajain13/phoronix:network-loopback",
+      "cmd": "phoronix-test-suite user-config-set SaveResults=FALSE && phoronix-test-suite batch-run pts/network-loopback",
+      "inst": 1
    },
    {
-       "name": "audio-encoding",
-      "cpu": 3.0,
-      "ram": 32,
-      "watts": 25.408,
-      "image": "gouravr/phoronix:audio-encoding",
-      "cmd": "phoronix-test-suite batch-run pts/audio-encoding",
-      "inst": 10
+      "name": "audio-encoding",
+      "cpu": 2.0,
+      "ram": 256,
+      "image": "ajain13/phoronix:audio-encoding",
+      "cmd": "phoronix-test-suite user-config-set SaveResults=FALSE && phoronix-test-suite batch-run pts/audio-encoding",
+      "inst": 1
+   },
+   {
+      "name": "video-encoding",
+      "cpu": 4.0,
+      "ram": 1024,
+      "image": "ajain13/phoronix:video-encoding",
+      "cmd": "phoronix-test-suite user-config-set SaveResults=FALSE && phoronix-test-suite batch-run pts/video-encoding",
+      "inst": 1
    },
    {
       "name": "avrora",
-      "cpu": 5.0,
+      "cpu": 4.0,
       "ram": 3072,
-      "watts": 37.839,
-      "image": "gouravr/dacapo:avrora",
+      "image": "rdelvalle/dacapo:avrora",
       "cmd": "java -jar /dacapo-9.12-bach.jar avrora -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "batik",
-      "cpu": 2.0,
+      "cpu": 3.0,
       "ram": 512,
-      "watts": 20.744,
-      "image": "gouravr/dacapo:batik",
+      "image": "rdelvalle/dacapo:batik",
       "cmd": "java -jar /dacapo-9.12-bach.jar batik -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "eclipse",
-      "cpu": 3.0,
-      "ram": 4608,
-      "watts": 42.394,
-      "image": "gouravr/dacapo:eclipse",
+      "cpu": 4.0,
+      "ram": 5120,
+      "image": "rdelvalle/dacapo:eclipse",
       "cmd": "java -jar /dacapo-9.12-bach.jar eclipse -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "h2",
-      "cpu": 3.0,
+      "cpu": 2.0,
       "ram": 3072,
-      "watts": 31.511,
-      "image": "gouravr/dacapo:h2",
+      "image": "rdelvalle/dacapo:h2",
       "cmd": "java -jar /dacapo-9.12-bach.jar h2 -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "jython",
-      "cpu": 3.0,
+      "cpu": 4.0,
       "ram": 5120,
-      "watts": 44.207,
-      "image": "gouravr/dacapo:jython",
+      "image": "rdelvalle/dacapo:jython",
       "cmd": "java -jar /dacapo-9.12-bach.jar jython -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "pmd",
-      "cpu": 3.0,
+      "cpu": 2.0,
       "ram": 1024,
-      "watts": 70.869,
-      "image": "gouravr/dacapo:pmd",
+      "image": "rdelvalle/dacapo:pmd",
       "cmd": "java -jar /dacapo-9.12-bach.jar pmd -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "sunflow",
       "cpu": 2.0,
       "ram": 3072,
-      "watts": 64.842,
-      "image": "gouravr/dacapo:sunflow",
+      "image": "rdelvalle/dacapo:sunflow",
       "cmd": "java -jar /dacapo-9.12-bach.jar sunflow -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "tradebeans",
-      "cpu": 3.0,
-      "ram": 3072,
-      "watts": 30.496,
-      "image": "gouravr/dacapo:tradebeans",
+      "cpu": 2.0,
+      "ram": 4096,
+      "image": "rdelvalle/dacapo:tradebeans",
       "cmd": "java -jar /dacapo-9.12-bach.jar tradebeans -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "xalan",
       "cpu": 2.0,
       "ram": 3072,
-      "watts": 70.085,
-      "image": "gouravr/dacapo:xalan",
+      "image": "rdelvalle/dacapo:xalan",
       "cmd": "java -jar /dacapo-9.12-bach.jar xalan -s large",
-      "inst": 10
+      "inst": 1
    },
    {
       "name": "cryptography",
-      "cpu": 3.0,
-      "ram": 128,
-      "watts": 106.749,
-      "image": "gouravr/phoronix:cryptography",
-      "cmd": "phoronix-test-suite batch-run pts/cryptography",
-      "inst": 10
+      "cpu": 4.0,
+      "ram": 256,
+      "image": "ajain13/phoronix:cryptography",
+      "cmd": "phoronix-test-suite user-config-set SaveResults=FALSE && phoronix-test-suite batch-run pts/cryptography",
+      "inst": 1
    }
 ]
+
