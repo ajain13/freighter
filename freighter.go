@@ -54,31 +54,9 @@ func main() {
 
 	url := flag.String("url", "", "URL at which the Aurora Scheduler exists as [url]:[port]")
 	jsonFile := flag.String("file", "", "JSON file containing job definition")
-	clustersConfig := flag.String("clusters", "", "Location of the clusters.json file used by aurora.")
-	clusterName := flag.String("cluster", "devcluster", "Name of cluster to run job on (only necessary if clusters is set)")
 	username := flag.String("username", "aurora", "Username to use for authorization")
 	password := flag.String("password", "secret", "Password to use for authorization")
 	flag.Parse()
-
-	if *clustersConfig != "" {
-		clusters, err := realis.LoadClusters(*clustersConfig)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		cluster, ok := clusters[*clusterName]
-		if !ok {
-			fmt.Printf("Cluster %s chosen doesn't exist\n", *clusterName)
-			os.Exit(1)
-		}
-
-		*url, err = realis.LeaderFromZK(cluster)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	}
 
 	if *jsonFile == "" {
 		flag.Usage()
@@ -108,18 +86,14 @@ func main() {
 		}
 	}
 
-	config, err := realis.NewTBinaryConfig(*url, 10000)
+	r, err := realis.NewRealisClient(
+		realis.BasicAuth(*username, *password),
+		realis.ThriftBinary(),
+		realis.SchedulerUrl(*url))
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	if *username != "" && *password != "" {
-
-		realis.AddBasicAuth(&config, *username, *password)
-	}
-
-	r := realis.NewClient(config)
 	defer r.Close()
 
 	var auroraJob realis.Job
