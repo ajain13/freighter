@@ -28,20 +28,17 @@ type JobJson struct {
 	NAME      string  `json:"name"`
 	CPU       float64 `json:"cpu"`
 	RAM       int64   `json:"ram"`
-	WATTS     float64 `json:"watts"`
 	IMAGE     string  `json:"image"`
 	COMMAND   string  `json:"cmd"`
 	INSTANCES int32   `json:"inst"`
 }
 
 func (j *JobJson) Validate() bool {
+	fmt.Println(*j)
 	if j.CPU <= 0.0 {
 		return false
 	}
 	if j.RAM <= 0 {
-		return false
-	}
-	if j.WATTS <= 0.0 {
 		return false
 	}
 	if j.INSTANCES <= 0 {
@@ -118,6 +115,7 @@ func main() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+
 		fmt.Println(resp.String())
 	}
 }

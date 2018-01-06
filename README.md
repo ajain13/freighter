@@ -8,10 +8,6 @@ Usage of ./auroraClient:
         URL at which the Aurora Scheduler exists as [url]:[port]
   -file string
         JSON file containing job definition
-  -clusters string
-        Location of the clusters.json file used by aurora.
-  -cluster string
-        Name of cluster to run job on (default "devcluster")
   -username string
         Username to use for authorization (default "aurora")
   -password string
@@ -20,5 +16,13 @@ Usage of ./auroraClient:
 
 ## Sample Command
 ```
-go run auroraClient.go -file sample_electron_workload.json -url http://192.168.33.7:8081
+go run freighter.go -file sample_electron_workload.json -url http://192.168.33.7:8081
+```
+
+## Requirements
+
+Aurora Scheduler must have the following options enabled for this tool to work:
+```
+  -allow_docker_parameters=true
+  -require_docker_use_executor=false
 ```
