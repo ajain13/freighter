@@ -18,9 +18,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/rdelval/gorealis"
 	"io/ioutil"
 	"os"
+
+	"github.com/paypal/gorealis"
 )
 
 type JobJson struct {

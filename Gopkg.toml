@@ -1,0 +1,9 @@
+required = ["git.apache.org/thrift.git/lib/go/thrift"]
+
+[[constraint]]
+  name = "github.com/paypal/gorealis"
+  version = "1.1.0"
+
+[[constraint]]
+    name = "git.apache.org/thrift.git"
+    version = "0.10.0"
