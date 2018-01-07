@@ -2,7 +2,7 @@ required = ["git.apache.org/thrift.git/lib/go/thrift"]
 
 [[constraint]]
   name = "github.com/paypal/gorealis"
-  version = "1.1.0"
+  revision = "1c426dd363ce7a018b55f90cdc1368acaaa6f52a"
 
 [[constraint]]
     name = "git.apache.org/thrift.git"

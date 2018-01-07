@@ -20,6 +20,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sync"
+
+	"github.com/paypal/gorealis/gen-go/apache/aurora"
 
 	"github.com/paypal/gorealis"
 )
@@ -92,8 +95,11 @@ func main() {
 		os.Exit(1)
 	}
 	defer r.Close()
+	m := realis.Monitor{r}
 
 	var auroraJob realis.Job
+	var wg sync.WaitGroup
+	jobFailed := false
 
 	for _, job := range jsonJob {
 		auroraJob = realis.NewJob().
@@ -117,5 +123,25 @@ func main() {
 		}
 
 		fmt.Println(resp.String())
+
+		// Monitor launched job
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+
+			suc, err := m.ScheduleStatus(auroraJob.JobKey(),
+				auroraJob.GetInstanceCount(),
+				map[aurora.ScheduleStatus]bool{aurora.ScheduleStatus_FINISHED: true},
+				1,
+				3600)
+			if !suc {
+				jobFailed = true
+				fmt.Println(err)
+			}
+		}()
+	}
+	wg.Wait()
+	if !jobFailed {
+		fmt.Println("All jobs have fineshed successfully states")
 	}
 }
