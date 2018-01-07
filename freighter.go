@@ -21,10 +21,12 @@ import (
 	"io/ioutil"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/paypal/gorealis/gen-go/apache/aurora"
 
 	"github.com/paypal/gorealis"
+	"github.com/rdelval/freighter/pcp"
 )
 
 type JobJson struct {
@@ -101,6 +103,13 @@ func main() {
 	var wg sync.WaitGroup
 	jobFailed := false
 
+	// PCP Logging
+	startTime := time.Now().Format("20060102150405")
+	logPrefix := "aurora_" + startTime
+	var PCPLog chan struct{}
+	logging := true
+
+	pcp.Start(PCPLog, &logging, logPrefix)
 	for _, job := range jsonJob {
 		auroraJob = realis.NewJob().
 			Environment("prod").
@@ -116,6 +125,11 @@ func main() {
 		fmt.Println("Creating docker based job : ", job.NAME)
 		container := realis.NewDockerContainer().Image(job.IMAGE).AddParameter("network", "host")
 		auroraJob.Container(container)
+
+		// Start writing to file right after we submit the first job
+		if !logging {
+			logging = true
+		}
 		resp, err := r.CreateJob(auroraJob)
 		if err != nil {
 			fmt.Println(err)
@@ -141,6 +155,7 @@ func main() {
 		}()
 	}
 	wg.Wait()
+	close(PCPLog)
 	if !jobFailed {
 		fmt.Println("All jobs have fineshed successfully states")
 	}
