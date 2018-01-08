@@ -18,29 +18,30 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/rdelval/gorealis"
 	"io/ioutil"
 	"os"
+	"sync"
+
+	"github.com/paypal/gorealis/gen-go/apache/aurora"
+
+	"github.com/paypal/gorealis"
 )
 
 type JobJson struct {
 	NAME      string  `json:"name"`
 	CPU       float64 `json:"cpu"`
 	RAM       int64   `json:"ram"`
-	WATTS     float64 `json:"watts"`
 	IMAGE     string  `json:"image"`
 	COMMAND   string  `json:"cmd"`
 	INSTANCES int32   `json:"inst"`
 }
 
 func (j *JobJson) Validate() bool {
+	fmt.Println(*j)
 	if j.CPU <= 0.0 {
 		return false
 	}
 	if j.RAM <= 0 {
-		return false
-	}
-	if j.WATTS <= 0.0 {
 		return false
 	}
 	if j.INSTANCES <= 0 {
@@ -53,31 +54,9 @@ func main() {
 
 	url := flag.String("url", "", "URL at which the Aurora Scheduler exists as [url]:[port]")
 	jsonFile := flag.String("file", "", "JSON file containing job definition")
-	clustersConfig := flag.String("clusters", "", "Location of the clusters.json file used by aurora.")
-	clusterName := flag.String("cluster", "devcluster", "Name of cluster to run job on (only necessary if clusters is set)")
 	username := flag.String("username", "aurora", "Username to use for authorization")
 	password := flag.String("password", "secret", "Password to use for authorization")
 	flag.Parse()
-
-	if *clustersConfig != "" {
-		clusters, err := realis.LoadClusters(*clustersConfig)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		cluster, ok := clusters[*clusterName]
-		if !ok {
-			fmt.Printf("Cluster %s chosen doesn't exist\n", *clusterName)
-			os.Exit(1)
-		}
-
-		*url, err = realis.LeaderFromZK(cluster)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	}
 
 	if *jsonFile == "" {
 		flag.Usage()
@@ -107,21 +86,20 @@ func main() {
 		}
 	}
 
-	config, err := realis.NewTBinaryConfig(*url, 10000)
+	r, err := realis.NewRealisClient(
+		realis.BasicAuth(*username, *password),
+		realis.ThriftBinary(),
+		realis.SchedulerUrl(*url))
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	if *username != "" && *password != "" {
-
-		realis.AddBasicAuth(&config, *username, *password)
-	}
-
-	r := realis.NewClient(config)
 	defer r.Close()
+	m := realis.Monitor{r}
 
 	var auroraJob realis.Job
+	var wg sync.WaitGroup
+	jobFailed := false
 
 	for _, job := range jsonJob {
 		auroraJob = realis.NewJob().
@@ -143,6 +121,27 @@ func main() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+
 		fmt.Println(resp.String())
+
+		// Monitor launched job
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+
+			suc, err := m.ScheduleStatus(auroraJob.JobKey(),
+				auroraJob.GetInstanceCount(),
+				map[aurora.ScheduleStatus]bool{aurora.ScheduleStatus_FINISHED: true},
+				1,
+				3600)
+			if !suc {
+				jobFailed = true
+				fmt.Println(err)
+			}
+		}()
+	}
+	wg.Wait()
+	if !jobFailed {
+		fmt.Println("All jobs have fineshed successfully states")
 	}
 }
