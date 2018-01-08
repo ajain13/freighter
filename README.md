@@ -16,7 +16,7 @@ Usage of ./auroraClient:
 
 ## Sample Command
 ```
-go run freighter.go -file sample_electron_workload.json -url http://192.168.33.7:8081
+go run freighter.go -file sample_freighter_workload.json -url http://192.168.33.7:8081
 ```
 
 ## Requirements
